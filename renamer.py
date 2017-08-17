@@ -1,31 +1,24 @@
 #! /usr/bin/python
-""" For now this just renames images to .png filename.
-
-This is very dumb as it simply copies binary data, instead of actually
-converting formats/encodings. Update if it doesn't work and also make it more
-generic in nature, not just png renamer.
-"""
+"""Renames an image to a .png format with same name at same path."""
 import os
 import sys  # Use argparse instead later.
 from ipdb import set_trace
+import Image
 
 def walker(real=False, dirname='', fnames=None):
   if not fnames:
     fnames = []
 
-  print 'Renaming files:'
-  # curdir = dirname
-
   fpath = os.path.realpath(dirname)
   for fname in fnames:
     if '.' in fname:  # It's a file, not a dir.
-      name, ext = fname.rsplit('.', 1)
+      name, _ = fname.rsplit('.', 1)
       new_fname = os.path.join(fpath, '.'.join((name, 'png')))
       img = os.path.join(fpath, fname)
       print img, '-->', new_fname
       if real:
-        with open(img, 'rb') as source, open(new_fname, 'wb') as dest:
-          dest.write(source.read())
+        with Image.open(img) as image_file:
+          image_file.save(new_fname)
 
 
 def main():
